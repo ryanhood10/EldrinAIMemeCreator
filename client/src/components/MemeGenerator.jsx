@@ -34,6 +34,7 @@ export default function MemeGenerator() {
   const templateSearchRef = useRef();
   const templateResultsRef = useRef();
 
+  const [activeTab, setActiveTab] = useState('template'); //tabs on mobile
 
   function handleGenerate() {
       // TODO: POST { prompt } to /api/memes/ai and handle response
@@ -427,69 +428,127 @@ export default function MemeGenerator() {
         </div>
       </section>
 
-      {/* Tabs Navigation */}
-      <div className="px-4">
-        <div className="flex border-b border-gray-200">
-          <button
-            id="tab-template"
-            className="flex-1 py-3 font-medium text-[#5167FC] border-b-2 border-[#5167FC] flex items-center justify-center"
-          >
-            <FontAwesomeIcon icon={faImagePortrait} className="mr-1" />
-            Template
-          </button>
-          <button
-            id="tab-text"
-            className="flex-1 py-3 font-medium text-gray-500 flex items-center justify-center"
-          >
-            <FontAwesomeIcon icon={faFont} className="mr-1" />
-            Text
-          </button>
-          <button
-            id="tab-image"
-            className="flex-1 py-3 font-medium text-gray-500 flex items-center justify-center"
-          >
-            <FontAwesomeIcon icon={faImage} className="mr-1" />
-            Add Image
-          </button>
-        </div>
+    {/* TABS */}
+    <div className="px-4">
+      <div className="flex border-b border-gray-200">
+        <button
+          onClick={() => setActiveTab('template')}
+          className={`flex-1 py-3 font-medium flex items-center justify-center ${
+            activeTab === 'template'
+              ? 'text-[#5167FC] border-b-2 border-[#5167FC]'
+              : 'text-gray-500'
+          }`}
+        >
+          <FontAwesomeIcon icon={faImagePortrait} className="mr-1" />
+          Template
+        </button>
+        <button
+          onClick={() => setActiveTab('text')}
+          className={`flex-1 py-3 font-medium flex items-center justify-center ${
+            activeTab === 'text'
+              ? 'text-[#5167FC] border-b-2 border-[#5167FC]'
+              : 'text-gray-500'
+          }`}
+        >
+          <FontAwesomeIcon icon={faFont} className="mr-1" />
+          Text
+        </button>
+        <button
+          onClick={() => setActiveTab('image')}
+          className={`flex-1 py-3 font-medium flex items-center justify-center ${
+            activeTab === 'image'
+              ? 'text-[#5167FC] border-b-2 border-[#5167FC]'
+              : 'text-gray-500'
+          }`}
+        >
+          <FontAwesomeIcon icon={faImage} className="mr-1" />
+          Add Image
+        </button>
       </div>
-
-      {/* Template Selection Tab */}
-   {/* Template Selection Tab */}
-<section id="template-selection-tab" className="px-4 py-4">
-  <div className="relative mb-4">
-    <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-      <FontAwesomeIcon icon={faImage} className="text-gray-400" />
     </div>
-    <input
-      type="text"
-      id="template-search"
-      placeholder="Search all memes"
-      className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#5167FC]"
-    />
-  </div>
 
-  <h3 className="text-sm font-medium mb-2 text-gray-700">Trending Memes</h3>
-  <div className="grid grid-cols-3 gap-3">
-    {Array.from({ length: 9 }).map((_, idx) => (
-      <div
-        key={idx}
-        className="template-item w-[90%] mx-auto my-auto cursor-pointer bg-white rounded-lg overflow-hidden border border-gray-200 hover:border-[#5167FC] transition-all"
-      >
-        <div className="aspect-square bg-gray-100">
-          <img
-            src="https://storage.googleapis.com/uxpilot-auth.appspot.com/c6373105e6-bc96f0f13b0af5e2a72b.png"
-            alt="Drake Hotline Bling"
-            className="w-full h-full object-cover"
+    {/* TEMPLATE PANEL */}
+    {activeTab === 'template' && (
+      <section id="template-selection-tab" className="px-4 py-4 mb-20">
+        <div className="relative mb-4">
+          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+            <FontAwesomeIcon icon={faImage} className="text-gray-400" />
+          </div>
+          <input
+            type="text"
+            id="template-search"
+            placeholder="Search all memes"
+            className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#5167FC]"
+            value={templateSearch}
+            onChange={e => setTemplateSearch(e.target.value)}
+            onFocus={() => setShowTemplateResults(true)}
           />
         </div>
-        <div className="p-2">
-          <p className="text-sm font-medium truncate">Drake Hotline Bling</p>
+
+        <h3 className="text-sm font-medium mb-2 text-gray-700">Trending Memes</h3>
+        <div className="grid grid-cols-3 gap-3">
+          {templates.map((tpl, idx) => (
+            <div
+              key={idx}
+              className="template-item w-[90%] mx-auto cursor-pointer bg-white rounded-lg overflow-hidden border border-gray-200 hover:border-[#5167FC] transition"
+              onClick={() => {
+                setTemplateSearch(tpl.name);
+                setShowTemplateResults(false);
+              }}
+            >
+              <div className="aspect-square bg-gray-100">
+                <img
+                  src={`https://i.imgflip.com/${tpl.id}.jpg`}
+                  alt={tpl.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="p-2">
+                <p className="text-sm font-medium truncate">{tpl.name}</p>
+              </div>
+            </div>
+          ))}
         </div>
-      </div>
-    ))}
-  </div>
-</section>
+      </section>
+    )}
+
+    {/* TEXT PANEL */}
+    {activeTab === 'text' && (
+      <section className="px-4 py-4 mb-20">
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Text 1</label>
+          <input
+            type="text"
+            className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#5167FC]"
+            value={text1}
+            onChange={e => setText1(e.target.value)}
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Text 2</label>
+          <input
+            type="text"
+            className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#5167FC]"
+            value={text2}
+            onChange={e => setText2(e.target.value)}
+          />
+        </div>
+      </section>
+    )}
+
+    {/* ADD IMAGE PANEL */}
+    {activeTab === 'image' && (
+      <section className="px-4 py-4 mb-20">
+        <button
+          onClick={() => setShowAddImageModal(true)}
+          className="w-full border border-dashed border-gray-300 rounded-md p-4 flex flex-col items-center justify-center gap-2 hover:bg-gray-50 transition"
+        >
+          <FontAwesomeIcon icon={faCloudArrowUp} className="text-2xl text-gray-500" />
+          <span className="font-medium text-gray-700">Add Image</span>
+        </button>
+      </section>
+    )}
+
 
 
 
