@@ -4,7 +4,7 @@ const {
   searchMemes,
   captionImage,
   generateAIMeme,
-} = require('../controllers/memeController');
+} = require('../contollers/memeController.js');
 
 // GET  /api/v1/memes/trending
 router.get('/trending', getTrendingMemes);
